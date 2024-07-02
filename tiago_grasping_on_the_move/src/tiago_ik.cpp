@@ -18,7 +18,7 @@ public:
         base_odom_sub = nh.subscribe("/gazebo/model_states", 10, &ArmController::base_odom_callback, this);
         target_odom_sub = nh.subscribe("/gazebo/model_states", 10, &ArmController::target_odom_callback, this);
 
-        // Delay
+        // Controller settings
         init_d = 1.0;
         init_rho = 1.0;
         set_init_rho = false;
