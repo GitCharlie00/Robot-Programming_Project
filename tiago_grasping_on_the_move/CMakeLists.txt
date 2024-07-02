@@ -1,12 +1,22 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(tiago_grasping_on_the_move)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
   std_msgs
+  gazebo_msgs
+  geometry_msgs
+  trajectory_msgs
 )
 
-catkin_package()
+catkin_package(
+  LIBRARIES tiago_grasping_on_the_move
+  CATKIN_DEPENDS roscpp rospy std_msgs gazebo_msgs geometry_msgs trajectory_msgs
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
