@@ -162,14 +162,20 @@ public:
 
     void target_odom_callback(const gazebo_msgs::ModelStates::ConstPtr& msg) {
         for (size_t i = 0; i < msg->name.size(); ++i) {
+            std::cout << "CALLBACK"<< std::endl;
             if (msg->name[i] == "unit_sphere") {
                 eps_t_x = msg->pose[i].position.x;
                 eps_t_y = msg->pose[i].position.y;
+                std::cout << "******************************************" << rho << std::endl;
+                std::cout << "Grasping target x     : " << eps_t_x << std::endl;
+                std::cout << "Grasping target y     : " << eps_t_y << std::endl;
+                std::cout << "******************************************" << rho << std::endl;
             } else if (msg->name[i] == "unit_box_1") {
                 eps_n_x = msg->pose[i].position.x;
                 eps_n_y = msg->pose[i].position.y;
             }
         }
+        
     }
 
     void move_base_to_desired_orientation() {
@@ -177,17 +183,17 @@ public:
         ros::Time start_time = ros::Time::now();
 
         while (ros::ok() && !is_desired_pose_reached) {
-            std::cout << "******************************************" << rho << std::endl;
-            std::cout << "Base linear velocity  : " << v_b << std::endl;
-            std::cout << "Base angular velocity : " << (k_alpha * alpha) * (v_b / rho) << std::endl;
-            std::cout << "Angualr gain          : " << k_alpha << std::endl;
-            std::cout << "Alpha                 : " << alpha << std::endl;
-            std::cout << "Rho                   : " << rho << std::endl;
-            std::cout << "Grasping target x     : " << eps_t_x << std::endl;
-            std::cout << "Grasping target y     : " << eps_t_y << std::endl;
-            std::cout << "Closest apporach x    : " << eps_c_x << std::endl;
-            std::cout << "Closest apporach x    : " << eps_c_y << std::endl;
-            std::cout << "******************************************" << rho << std::endl;
+            // std::cout << "******************************************" << rho << std::endl;
+            // std::cout << "Base linear velocity  : " << v_b << std::endl;
+            // std::cout << "Base angular velocity : " << (k_alpha * alpha) * (v_b / rho) << std::endl;
+            // std::cout << "Angualr gain          : " << k_alpha << std::endl;
+            // std::cout << "Alpha                 : " << alpha << std::endl;
+            // std::cout << "Rho                   : " << rho << std::endl;
+            // std::cout << "Grasping target x     : " << eps_t_x << std::endl;
+            // std::cout << "Grasping target y     : " << eps_t_y << std::endl;
+            // std::cout << "Closest apporach x    : " << eps_c_x << std::endl;
+            // std::cout << "Closest apporach x    : " << eps_c_y << std::endl;
+            // std::cout << "******************************************" << rho << std::endl;
             
             geometry_msgs::Twist vel_msg;
             vel_msg.linear.x = v_b;
