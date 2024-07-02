@@ -12,6 +12,7 @@
 class BaseController {
 private:
     ros::NodeHandle nh;
+    ros::Publisher pub_gripper_controller;
     ros::Publisher velocity_publisher;
     ros::Subscriber base_odom_subscriber;
     ros::Subscriber target_odom_subscriber;
@@ -42,6 +43,7 @@ public:
           eps_n_x(0.0), eps_n_y(0.0), alpha(1.0), beta(1.0), rho(1.0), rho_n(1.0),
           is_desired_pose_reached(false), is_desired_orientation_updated(false), second_phase(false), set_init_rho(false) {
         velocity_publisher = nh.advertise<geometry_msgs::Twist>("/mobile_base_controller/cmd_vel", 10);
+        pub_gripper_controller = nh.advertise<trajectory_msgs::JointTrajectory>("/gripper_controller/command", 1);
         base_odom_subscriber = nh.subscribe("/gazebo/model_states", 10, &BaseController::base_odom_callback, this);
         target_odom_subscriber = nh.subscribe("/gazebo/model_states", 10, &BaseController::target_odom_callback, this);
     }
@@ -87,23 +89,21 @@ public:
     }
 
     void close_gripper() {
-        ros::Publisher pub_gripper_controller = nh.advertise<trajectory_msgs::JointTrajectory>("/gripper_controller/command", 1);
         trajectory_msgs::JointTrajectory trajectory;
         trajectory.joint_names = {"gripper_left_finger_joint", "gripper_right_finger_joint"};
         trajectory_msgs::JointTrajectoryPoint trajectory_points;
         trajectory_points.positions = {0.000, 0.000};
-        trajectory_points.time_from_start = ros::Duration(1.0);
+        trajectory_points.time_from_start = ros::Duration(0.3);
         trajectory.points.push_back(trajectory_points);
         pub_gripper_controller.publish(trajectory);
     }
 
     void open_gripper() {
-        ros::Publisher pub_gripper_controller = nh.advertise<trajectory_msgs::JointTrajectory>("/gripper_controller/command", 1);
         trajectory_msgs::JointTrajectory trajectory;
         trajectory.joint_names = {"gripper_left_finger_joint", "gripper_right_finger_joint"};
         trajectory_msgs::JointTrajectoryPoint trajectory_points;
         trajectory_points.positions = {0.044, 0.044};
-        trajectory_points.time_from_start = ros::Duration(1.0);
+        trajectory_points.time_from_start = ros::Duration(0.3);
         trajectory.points.push_back(trajectory_points);
         pub_gripper_controller.publish(trajectory);
     }
@@ -123,20 +123,9 @@ public:
     void move_base_to_desired_orientation() {
         ros::Duration(2.5).sleep();
         ros::Time start_time = ros::Time::now();
-
+        
         while (ros::ok() && !is_desired_pose_reached) {
             ros::spinOnce();
-            // std::cout << "******************************************" << rho << std::endl;
-            // std::cout << "Base linear velocity  : " << v_b << std::endl;
-            // std::cout << "Base angular velocity : " << (k_alpha * alpha) * (v_b / rho) << std::endl;
-            // std::cout << "Angualr gain          : " << k_alpha << std::endl;
-            // std::cout << "Alpha                 : " << alpha << std::endl;
-            // std::cout << "Rho                   : " << rho << std::endl;
-            // std::cout << "Grasping target x     : " << eps_t_x << std::endl;
-            // std::cout << "Grasping target y     : " << eps_t_y << std::endl;
-            // std::cout << "Closest apporach x    : " << eps_c_x << std::endl;
-            // std::cout << "Closest apporach x    : " << eps_c_y << std::endl;
-            // std::cout << "******************************************" << rho << std::endl;
             
             if (rho <= gripper_threshold) {
                 close_gripper();
@@ -162,7 +151,7 @@ public:
                     rate.sleep();
                 } else {
                     ros::Time end_time = ros::Time::now();
-                    std::cout << "********************" << (end_time - start_time).toSec() << std::endl;
+                    std::cout << "[LOG] Total simulation time: " << (end_time - start_time).toSec() << std::endl;
                     geometry_msgs::Twist vel_msg;
                     vel_msg.linear.x = 0.0;
                     vel_msg.angular.z = 0.0;
