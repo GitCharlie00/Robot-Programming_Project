@@ -162,14 +162,9 @@ public:
 
     void target_odom_callback(const gazebo_msgs::ModelStates::ConstPtr& msg) {
         for (size_t i = 0; i < msg->name.size(); ++i) {
-            std::cout << "CALLBACK"<< std::endl;
             if (msg->name[i] == "unit_sphere") {
                 eps_t_x = msg->pose[i].position.x;
                 eps_t_y = msg->pose[i].position.y;
-                std::cout << "******************************************" << rho << std::endl;
-                std::cout << "Grasping target x     : " << eps_t_x << std::endl;
-                std::cout << "Grasping target y     : " << eps_t_y << std::endl;
-                std::cout << "******************************************" << rho << std::endl;
             } else if (msg->name[i] == "unit_box_1") {
                 eps_n_x = msg->pose[i].position.x;
                 eps_n_y = msg->pose[i].position.y;
@@ -183,6 +178,7 @@ public:
         ros::Time start_time = ros::Time::now();
 
         while (ros::ok() && !is_desired_pose_reached) {
+            ros::spinOnce(); // Process incoming messages and call callbacks
             // std::cout << "******************************************" << rho << std::endl;
             // std::cout << "Base linear velocity  : " << v_b << std::endl;
             // std::cout << "Base angular velocity : " << (k_alpha * alpha) * (v_b / rho) << std::endl;
@@ -195,45 +191,39 @@ public:
             // std::cout << "Closest apporach x    : " << eps_c_y << std::endl;
             // std::cout << "******************************************" << rho << std::endl;
             
-            geometry_msgs::Twist vel_msg;
-            vel_msg.linear.x = v_b;
-            vel_msg.angular.z = (k_alpha * alpha) * (v_b / rho);
-            velocity_publisher.publish(vel_msg);
-            rate.sleep();
+            if (rho <= gripper_threshold) {
+                close_gripper();
+            }
 
-            // if (rho <= gripper_threshold) {
-            //     close_gripper();
-            // }
+            if (rho > threshold) {
+                geometry_msgs::Twist vel_msg;
+                vel_msg.linear.x = v_b;
+                vel_msg.angular.z = (k_alpha * alpha) * (v_b / rho);
+                velocity_publisher.publish(vel_msg);
+                rate.sleep();
+            } else {
+                if (rho_n <= gripper_threshold_n) {
+                    open_gripper();
+                }
 
-            // if (rho > threshold) {
-            //     geometry_msgs::Twist vel_msg;
-            //     vel_msg.linear.x = v_b;
-            //     vel_msg.angular.z = (k_alpha * alpha) * (v_b / rho);
-            //     velocity_publisher.publish(vel_msg);
-            //     rate.sleep();
-            // } else {
-            //     if (rho_n <= gripper_threshold_n) {
-            //         open_gripper();
-            //     }
-
-            //     if (rho_n > threshold_n) {
-            //         geometry_msgs::Twist vel_msg;
-            //         vel_msg.linear.x = v_b;
-            //         vel_msg.angular.z = (k_beta * beta) * (v_b / rho_n);
-            //         velocity_publisher.publish(vel_msg);
-            //         rate.sleep();
-            //     } else {
-            //         is_desired_pose_reached = true;
-            //         ros::Time end_time = ros::Time::now();
-            //         std::cout << "********************" << (end_time - start_time).toSec() << std::endl;
-            //         geometry_msgs::Twist vel_msg;
-            //         vel_msg.linear.x = 0.0;
-            //         vel_msg.angular.z = 0.0;
-            //         velocity_publisher.publish(vel_msg);
-            //         rate.sleep();
-            //         is_desired_pose_reached = true;
-            //     }
-            // }
+                if (rho_n > threshold_n) {
+                    geometry_msgs::Twist vel_msg;
+                    vel_msg.linear.x = v_b;
+                    vel_msg.angular.z = (k_beta * beta) * (v_b / rho_n);
+                    velocity_publisher.publish(vel_msg);
+                    rate.sleep();
+                } else {
+                    is_desired_pose_reached = true;
+                    ros::Time end_time = ros::Time::now();
+                    std::cout << "********************" << (end_time - start_time).toSec() << std::endl;
+                    geometry_msgs::Twist vel_msg;
+                    vel_msg.linear.x = 0.0;
+                    vel_msg.angular.z = 0.0;
+                    velocity_publisher.publish(vel_msg);
+                    rate.sleep();
+                    is_desired_pose_reached = true;
+                }
+            }
         }
     }
 };
