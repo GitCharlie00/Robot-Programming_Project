@@ -61,6 +61,7 @@ public:
 
     void move_arm() {
         ros::Duration(1.6).sleep();
+        ros::spinOnce();
 
         geometry_msgs::PointStamped target_point;
         target_point.header.frame_id = from_frame;
