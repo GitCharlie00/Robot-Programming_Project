@@ -2,38 +2,22 @@ cmake_minimum_required(VERSION 3.0.2)
 project(tiago_grasping_on_the_move)
 
 find_package(catkin REQUIRED COMPONENTS
-  rospy
-  geometry_msgs
-  tf2
-  moveit_core
-  moveit_ros_planning
-  moveit_ros_planning_interface
-  interactive_markers
+  roscpp
+  std_msgs
 )
 
-catkin_python_setup()
-
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tiago_grasping_on_the_move
-  CATKIN_DEPENDS
-    rospy
-    geometry_msgs
-    tf2
-    moveit_core
-    moveit_ros_planning
-    moveit_ros_planning_interface
-    interactive_markers
-#  DEPENDS system_lib
-)
+catkin_package()
 
 include_directories(
-# include
   ${catkin_INCLUDE_DIRS}
+  src  # Aggiungi questa riga per includere la directory src
 )
 
-install(PROGRAMS
-  scripts/tiago_grasping_on_the_move
-  scripts/tiago_ik
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+add_executable(tiago_grasping_on_the_move 
+  scripts/tiago_grasping_on_the_move.cpp
+  src/base_controller.cpp  # Aggiungi questo
+)
+
+target_link_libraries(tiago_grasping_on_the_move
+  ${catkin_LIBRARIES}
 )

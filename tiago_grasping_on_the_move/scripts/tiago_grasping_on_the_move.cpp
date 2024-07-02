@@ -1,8 +1,11 @@
-#include "base_controller.cpp" // Assumendo che il tuo file C++ del controller si chiami base_controller.cpp
+#include "../src/base_controller.cpp"  // Assicurati che il percorso sia corretto
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "cust_base_vel_controller");
-    BaseController controller;
-    controller.move_base_to_desired_orientation();
+    ros::init(argc, argv, "tiago_grasping_on_the_move");
+    ros::NodeHandle nh;
+
+    initializeController();
+
+    ros::spin();
     return 0;
 }
