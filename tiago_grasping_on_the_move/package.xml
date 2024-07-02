@@ -6,7 +6,7 @@
 
   <maintainer email="schiavella.1884561@studenti.uniroma1.it">Claudio Schiavella</maintainer>
 
-    <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
