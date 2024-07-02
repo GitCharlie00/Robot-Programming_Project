@@ -6,7 +6,7 @@
 #include <gazebo_msgs/ModelStates.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <trajectory_msgs/JointTrajectoryPoint.h>
-#include "tangent_point.h"  // Ensure this is included
+#include "tangent_point.h"
 
 class Quaternion {
 public:
@@ -88,7 +88,7 @@ private:
 public:
     BaseController()
         : rate(10), v_b(0.3), k_alpha(4), k_beta(2.2),
-          gripper_threshold(1.65), threshold(1.75), gripper_threshold_n(2.30), threshold_n(2.20),
+          gripper_threshold(1.65), threshold(1.75), gripper_threshold_n(0.65), threshold_n(0.65),
           r_c(0.6), d(1.0), d_n(1.0), eps_b_x(0.0), eps_b_y(0.0), theta(0.0),
           eps_t_x(0.0), eps_t_y(0.0), eps_c_x(0.0), eps_c_y(0.0), eps_c_n_x(0.0), eps_c_n_y(0.0),
           eps_n_x(0.0), eps_n_y(0.0), alpha(1.0), beta(1.0), rho(1.0), rho_n(1.0),
@@ -170,7 +170,6 @@ public:
                 eps_n_y = msg->pose[i].position.y;
             }
         }
-        
     }
 
     void move_base_to_desired_orientation() {
@@ -195,13 +194,14 @@ public:
                 close_gripper();
             }
 
-            if (rho > threshold) {
+            if (rho > threshold  && !second_phase) {
                 geometry_msgs::Twist vel_msg;
                 vel_msg.linear.x = v_b;
                 vel_msg.angular.z = (k_alpha * alpha) * (v_b / rho);
                 velocity_publisher.publish(vel_msg);
                 rate.sleep();
             } else {
+                second_phase = true;
                 if (rho_n <= gripper_threshold_n) {
                     open_gripper();
                 }
@@ -213,7 +213,6 @@ public:
                     velocity_publisher.publish(vel_msg);
                     rate.sleep();
                 } else {
-                    is_desired_pose_reached = true;
                     ros::Time end_time = ros::Time::now();
                     std::cout << "********************" << (end_time - start_time).toSec() << std::endl;
                     geometry_msgs::Twist vel_msg;
@@ -222,6 +221,7 @@ public:
                     velocity_publisher.publish(vel_msg);
                     rate.sleep();
                     is_desired_pose_reached = true;
+                    break;
                 }
             }
         }
