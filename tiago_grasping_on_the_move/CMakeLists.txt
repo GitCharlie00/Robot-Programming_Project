@@ -29,12 +29,17 @@ include_directories(
   src  # Aggiungi questa riga per includere la directory src
 )
 
-add_executable(tiago_grasping_on_the_move 
+add_executable(node_base 
   scripts/tiago_grasping_on_the_move.cpp
-  src/base_controller.cpp  # Aggiungi questo
+  src/base_controller.cpp  
+)
+target_link_libraries(node_base ${catkin_LIBRARIES})
+
+
+add_executable(node_arm
+  scripts/tiago_arm.cpp
   src/tiago_ik.cpp
 )
+target_link_libraries(node_arm ${catkin_LIBRARIES})
+  
 
-target_link_libraries(tiago_grasping_on_the_move
-  ${catkin_LIBRARIES}
-)
