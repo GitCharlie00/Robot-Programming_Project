@@ -204,13 +204,3 @@ private:
         return point;
     }
 };
-
-int main(int argc, char** argv) {
-    ros::init(argc, argv, "plan_arm_torso_ik");
-
-    ArmController controller;
-    controller.move_arm();
-
-    ros::shutdown();
-    return 0;
-}
