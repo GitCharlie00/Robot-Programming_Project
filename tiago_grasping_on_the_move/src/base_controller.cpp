@@ -178,7 +178,7 @@ public:
         ros::Time start_time = ros::Time::now();
 
         while (ros::ok() && !is_desired_pose_reached) {
-            ros::spinOnce(); // Process incoming messages and call callbacks
+            ros::spinOnce();
             // std::cout << "******************************************" << rho << std::endl;
             // std::cout << "Base linear velocity  : " << v_b << std::endl;
             // std::cout << "Base angular velocity : " << (k_alpha * alpha) * (v_b / rho) << std::endl;
