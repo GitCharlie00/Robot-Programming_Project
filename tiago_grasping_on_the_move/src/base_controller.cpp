@@ -151,7 +151,7 @@ public:
                     rate.sleep();
                 } else {
                     ros::Time end_time = ros::Time::now();
-                    std::cout << "[LOG] Total simulation time: " << (end_time - start_time).toSec() << std::endl;
+                    std::cout << "[LOG] Total simulation time: " << (end_time - start_time).toSec() << " sec" << std::endl;
                     geometry_msgs::Twist vel_msg;
                     vel_msg.linear.x = 0.0;
                     vel_msg.angular.z = 0.0;
