@@ -15,8 +15,8 @@
 /*************** Mobile base controller ***************/
 class BaseController {
 private:
-    // ROS-related members
-    ros::NodeHandle nh;
+    // ROS topics
+    ros::NodeHandle nh; // Handle to allow program to interact with ROS topics
     ros::Publisher pub_gripper_controller;
     ros::Publisher velocity_publisher;
     ros::Subscriber base_odom_subscriber;
@@ -112,11 +112,11 @@ public:
                 rho_n = (r_c > d_n) ? 0 : std::sqrt(d_n * d_n - r_c * r_c);
 
                 // Compute online the closest approach point to the targets
-                auto [cx, cy] = tangent_point(eps_b_x, eps_b_y, eps_t_x, eps_t_y, r_c);
+                auto [cx, cy] = tangent_point(eps_b_x, eps_b_y, eps_t_x, eps_t_y, r_c); // Variable type deducet by compiler
                 eps_c_x = cx;
                 eps_c_y = cy;
 
-                auto [cnx, cny] = tangent_point(eps_b_x, eps_b_y, eps_n_x, eps_n_y, r_c);
+                auto [cnx, cny] = tangent_point(eps_b_x, eps_b_y, eps_n_x, eps_n_y, r_c); // Variable type deducet by compiler
                 eps_c_n_x = cnx;
                 eps_c_n_y = cny;
             }
