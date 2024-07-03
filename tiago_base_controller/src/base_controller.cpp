@@ -48,7 +48,7 @@ public:
           k_alpha(4), 
           k_beta(2.2),
           gripper_threshold(1.65),
-          threshold(1.75),
+          threshold(1.65),
           gripper_threshold_n(0.65),
           threshold_n(0.65),
           r_c(0.6),

@@ -1,7 +1,7 @@
 #include "../src/base_controller.cpp"  // Ensure the path is correct
 
 int main(int argc, char **argv) {
-    ros::init(argc, argv, "tiago_grasping_on_the_move");
+    ros::init(argc, argv, "tiago_base_controller");
     ros::NodeHandle nh;
 
     // Create an instance of the BaseController class
@@ -15,3 +15,4 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
