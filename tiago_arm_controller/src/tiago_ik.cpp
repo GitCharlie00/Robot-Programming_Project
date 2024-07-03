@@ -40,8 +40,9 @@ int main(int argc, char** argv)
   //select group of joints
   moveit::planning_interface::MoveGroupInterface group_arm_torso("arm_torso");
 
-  group_arm_torso.setPlannerId("SBLkConfigDefault");
-  
+  // group_arm_torso.setPlannerId("SBLkConfigDefault");
+  group_arm_torso.setPlannerId("RRTstarkConfigDefault");
+
   group_arm_torso.setPoseReferenceFrame("base_footprint");
   group_arm_torso.setPoseTarget(goal_pose);
 
