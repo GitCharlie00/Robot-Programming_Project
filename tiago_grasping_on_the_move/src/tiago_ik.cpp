@@ -10,48 +10,68 @@
 #include <cmath>
 
 class ArmController {
+private:
+    ros::NodeHandle nh;
+    moveit::planning_interface::MoveGroupInterface* move_group;
+    ros::Subscriber base_odom_sub;
+    ros::Subscriber target_odom_sub;
+    ros::Rate* rate;
+
+    double init_d;
+    double init_rho;
+    bool set_init_rho;
+
+    double eps_t_x;
+    double eps_t_y;
+    double eps_t_z;
+
+    double eps_b_x;
+    double eps_b_y;
+    double theta;
+
+    double r_c;
+    double eps_c_x;
+    double eps_c_y;
+    double d;
+    double rho;
+    double alpha;
+
+    std::string from_frame;
+    std::string to_frame;
+    double ee_orientation_r;
+    double ee_orientation_p;
+    double ee_orientation_y;
+
+    std::string planner;
+
 public:
-    ArmController() {
-        // Node settings
-        ros::NodeHandle nh;
+    ArmController() 
+        : init_d(1.0)
+          , init_rho(1.0)
+          , set_init_rho(false)
+          , eps_t_x(0.0)
+          , eps_t_y(0.0)
+          , eps_t_z(0.0)
+          , eps_b_x(0.0)
+          , eps_b_y(0.0)
+          , theta(0.0)
+          , r_c(0.6)
+          , eps_c_x(0.0)
+          , eps_c_y(0.0)
+          , d(0.0)
+          , rho(0.0)
+          , alpha(0.0)
+          , from_frame("odom")
+          , to_frame("base_footprint")
+          , ee_orientation_r(-1.5)
+          , ee_orientation_p(0.5)
+          , ee_orientation_y(-0.0)
+          , planner("PRMstarkConfigDefault")
+          , rate(new ros::Rate(1))
+    {
         move_group = new moveit::planning_interface::MoveGroupInterface("arm_torso");
         base_odom_sub = nh.subscribe("/gazebo/model_states", 10, &ArmController::base_odom_callback, this);
         target_odom_sub = nh.subscribe("/gazebo/model_states", 10, &ArmController::target_odom_callback, this);
-
-        // Controller settings
-        init_d = 1.0;
-        init_rho = 1.0;
-        set_init_rho = false;
-
-        // Target position
-        eps_t_x = 0.0;
-        eps_t_y = 0.0;
-        eps_t_z = 0.0;
-
-        // Base position
-        eps_b_x = 0.0;
-        eps_b_y = 0.0;
-        theta = 0.0;
-
-        // Closest approach point
-        r_c = 0.6;
-        eps_c_x = 0.0;
-        eps_c_y = 0.0;
-        d = 0.0;
-        rho = 0.0;
-        alpha = 0.0;
-
-        // Grasping goal
-        from_frame = "odom";
-        to_frame = "base_footprint";
-        ee_orientation_r = -1.5;
-        ee_orientation_p = 0.5;
-        ee_orientation_y = -0.0;
-
-        // Trajectory planner
-        planner = "PRMstarkConfigDefault";
-
-        rate = new ros::Rate(10); // 10 Hz
     }
 
     ~ArmController() {
@@ -62,6 +82,8 @@ public:
     void move_arm() {
         ros::Duration(1.6).sleep();
         ros::spinOnce();
+
+        ROS_INFO_STREAM("Dentro il nodo arm");
 
         geometry_msgs::PointStamped target_point;
         target_point.header.frame_id = from_frame;
@@ -110,39 +132,6 @@ public:
         move_group->move();
         ROS_INFO("Motion duration: %f", (ros::Time::now() - start_time).toSec());
     }
-
-private:
-    moveit::planning_interface::MoveGroupInterface* move_group;
-    ros::Subscriber base_odom_sub;
-    ros::Subscriber target_odom_sub;
-    ros::Rate* rate;
-
-    double init_d;
-    double init_rho;
-    bool set_init_rho;
-
-    double eps_t_x;
-    double eps_t_y;
-    double eps_t_z;
-
-    double eps_b_x;
-    double eps_b_y;
-    double theta;
-
-    double r_c;
-    double eps_c_x;
-    double eps_c_y;
-    double d;
-    double rho;
-    double alpha;
-
-    std::string from_frame;
-    std::string to_frame;
-    double ee_orientation_r;
-    double ee_orientation_p;
-    double ee_orientation_y;
-
-    std::string planner;
 
     void base_odom_callback(const gazebo_msgs::ModelStates::ConstPtr& msg) {
         for (size_t i = 0; i < msg->name.size(); ++i) {

@@ -30,6 +30,7 @@ include_directories(
 )
 
 add_executable(tiago_grasping_on_the_move 
+  scripts/tiago_arm.cpp
   scripts/tiago_grasping_on_the_move.cpp
   src/base_controller.cpp  # Aggiungi questo
   src/tiago_ik.cpp

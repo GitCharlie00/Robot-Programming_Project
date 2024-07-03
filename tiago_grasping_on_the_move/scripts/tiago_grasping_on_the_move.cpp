@@ -1,6 +1,6 @@
 #include "../src/base_controller.cpp"  // Ensure the path is correct
 
-int main(int argc, char **argv) {
+int amain(int argc, char **argv) {
     ros::init(argc, argv, "tiago_grasping_on_the_move");
     ros::NodeHandle nh;
 
