@@ -21,7 +21,12 @@ First run the Gazebo world:
 roslaunch rp_tiago_gazebo tiago_gazebo.launch public_sim:=true end_effector:=pal-gripper world:=post_ball_polygonbox
 ```
 
-Then run the node to execute simoultaneously the base and the arm controller
+Run the nodes to execute the base and the arm controllers
 ```bash
-roslaunch tiago_grasping_on_the_move tiago_grasping_on_the_move.launch
+rosrun tiago_base_controller tiago_base_controller
 ```
+And
+```bash
+rosrun tiago_arm_controller tiago_ik 0.40 0.55 0.77 -1.5 0.5 0.0 
+```
+
