@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="tiago_base_controller" type="tiago_base_controller" name="tiago_base_controller" output="screen" />
+</launch>
